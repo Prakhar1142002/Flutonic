@@ -11,6 +11,7 @@ import { useParams } from "react-router-dom";
 import { useAlert } from "react-alert";
 
 import Loader from "../layout/Loader/Loader";
+import MetaData from "../layout/MetaData";
 
 const ProductDetails = () => {
   const alert = useAlert();
@@ -42,6 +43,7 @@ const ProductDetails = () => {
         <Loader />
       ) : (
         <Fragment>
+          <MetaData title={`${product.name} | Flutonic`} />
           <div className="productDetails">
             <div>
               <Carousel style={styles}>

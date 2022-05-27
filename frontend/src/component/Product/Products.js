@@ -1,28 +1,62 @@
 import React, { Fragment, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
-import { getProduct } from "../../actions/productAction";
+import { clearErrors, getProduct } from "../../actions/productAction";
+import { useAlert } from "react-alert";
+
 import ProductCard from "../Home/ProductCard";
 import Loader from "../layout/Loader/Loader";
 import "./Products.css";
 
 import Pagination from "react-js-pagination";
+import { Typography, Slider } from "@mui/material";
+import MetaData from "../layout/MetaData";
+
+const categories = [
+  "Laptop",
+  "Footwear",
+  "Bottom",
+  "Tshirt",
+  "Shirt",
+  "Cap",
+  "SmartPhones",
+];
 
 const Products = () => {
   const dispatch = useDispatch();
   const [currentPage, setCurrentPage] = useState(1);
-  const { products, loading, error, productsCount, resultPerPage } =
-    useSelector((state) => state.products);
+  const [price, setPrice] = useState([0, 25000]);
+  const [category, setCategory] = useState("");
+  const [ratings, setRatings] = useState(0);
+  const {
+    products,
+    loading,
+    error,
+    productsCount,
+    resultPerPage,
+    filteredProductsCount,
+  } = useSelector((state) => state.products);
 
   const { keyword } = useParams();
-
-  useEffect(() => {
-    dispatch(getProduct(keyword, currentPage));
-  }, [dispatch, keyword, currentPage]);
 
   const setCurrentPageNo = (e) => {
     setCurrentPage(e);
   };
+  const priceHandler = (event, newPrice) => {
+    setPrice(newPrice);
+  };
+
+  const alert = useAlert();
+
+  useEffect(() => {
+    if (error) {
+      alert.error(error);
+      dispatch(clearErrors());
+    }
+    dispatch(getProduct(keyword, currentPage, price, category, ratings));
+  }, [dispatch, keyword, currentPage, price, category, ratings, error, alert]);
+
+  let count = filteredProductsCount;
 
   return (
     <Fragment>
@@ -30,6 +64,7 @@ const Products = () => {
         <Loader />
       ) : (
         <Fragment>
+          <MetaData title="Products | Flutonic" />
           <h2 className="productsHeading">Products</h2>
 
           <div className="products">
@@ -39,7 +74,48 @@ const Products = () => {
               ))}
           </div>
 
-          {resultPerPage < productsCount && (
+          <div className="filterBox">
+            <Typography>Price</Typography>
+            <Slider
+              size="small"
+              value={price}
+              onChange={priceHandler}
+              valueLabelDisplay="auto"
+              aria-labelledby="range-slider"
+              min={0}
+              max={25000}
+            />
+
+            <Typography>Categories</Typography>
+            <ul className="categoryBox">
+              {categories.map((category) => (
+                <li
+                  className="category-link"
+                  key={category}
+                  onClick={() => setCategory(category)}
+                >
+                  {category}
+                </li>
+              ))}
+            </ul>
+
+            <fieldset>
+              <Typography component="legend">Ratings</Typography>
+              <Slider
+                size="small"
+                value={ratings}
+                onChange={(e, newRating) => {
+                  setRatings(newRating);
+                }}
+                aria-labelledby="continuous-slider"
+                valueLabelDisplay="auto"
+                min={0}
+                max={5}
+              />
+            </fieldset>
+          </div>
+
+          {resultPerPage < count && (
             <div className="paginationBox">
               <Pagination
                 activePage={currentPage}

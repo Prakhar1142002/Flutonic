@@ -23,16 +23,21 @@ exports.getAllProducts = catchAsyncErrors(async (req, res, next) => {
 
   const apiFeatures = new ApiFeatures(Product.find(), req.query)
     .search()
-    .filter()
-    .pagination(resultPerPage); // more appropriate is req.query.keyword but we can access it in another component using .keyword
+    .filter();
+  // more appropriate is req.query.keyword but we can access it in another component using .keyword
   // const products = await Product.find(); // Product.find() is equal to apiFeatures.query
-  const products = await apiFeatures.query;
+  let products = await apiFeatures.query;
+  let filteredProductsCount = products.length; //after filtering the products will be less so need to keep count
+  apiFeatures.pagination(resultPerPage);
+
+  products = await apiFeatures.query.clone();
 
   res.status(200).json({
     success: true,
     products,
     productsCount,
     resultPerPage,
+    filteredProductsCount,
   }); //200 status for success
 });
 
