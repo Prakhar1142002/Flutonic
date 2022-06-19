@@ -9,8 +9,15 @@ import ProductDetails from "./component/Product/ProductDetails";
 import Products from "./component/Product/Products";
 import Search from "./component/Product/Search";
 import LoginSignUp from "./component/User/LoginSignUp";
+import UserOptions from "./component/layout/Header/UserOptions.js";
+
+import store from "./store";
+import { loadUser } from "./actions/userAction";
+import { useSelector } from "react-redux";
 
 function App() {
+  const { isAuthenticated, user } = useSelector((state) => state.user);
+
   useEffect(() => {
     WebFont.load({
       google: {
@@ -18,7 +25,7 @@ function App() {
       },
     });
 
-    // store.dispatch(loadUser());
+    store.dispatch(loadUser());
 
     // getStripeApiKey();
   }, []);
@@ -26,6 +33,8 @@ function App() {
   return (
     <BrowserRouter>
       <Header />
+
+      {isAuthenticated && <UserOptions user={user} />}
 
       <Routes>
         <Route path="/" element={<Home />} />
