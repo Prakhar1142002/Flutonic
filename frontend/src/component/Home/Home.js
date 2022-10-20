@@ -36,7 +36,7 @@ function Home() {
           <MetaData title="Flutonic" />
 
           <div className="banner">
-            <p>Welcome to Flutonic</p>
+            <p>Welcome to Aathva</p>
             <h1>FIND AMAZING PRODUCTS BELOW</h1>
 
             <a href="#container">

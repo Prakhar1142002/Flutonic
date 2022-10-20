@@ -1,0 +1,16 @@
+.headerImg {
+  width: 100%;
+  object-fit: cover;
+  height: 91vh;
+}
+.super_set {
+  display: flex;
+  justify-content: space-between;
+  margin: 10px;
+}
+.sub_set {
+  text-align: center;
+  border: 2px solid lightblue;
+  width: 33%;
+  height: 50vh;
+}
